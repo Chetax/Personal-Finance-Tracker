@@ -4,6 +4,7 @@ import NotFound from './component/NotFound';
 import Login from './component/Login';
 import SignUp from './component/SignUp';
 import Dashbaord from './component/Dashbaord';
+import Profile from './component/Profile';
 function App() {
   let isAuthentica=true;
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
         <Route path='/dashboard' element={isAuthentica ? <Dashbaord/> : <Navigate to="/login" replace/>}></Route>
+        <Route path='/profile' element={isAuthentica ? <Profile/> : <Navigate to="/login" replace/>}></Route>
     </Routes>
   )
 }
