@@ -38,10 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'User',
+    'Finance',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders'
 ]
+
+AUTH_USER_MODEL = 'User.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
