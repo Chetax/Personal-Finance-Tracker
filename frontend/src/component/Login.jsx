@@ -6,7 +6,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -18,8 +18,9 @@ const Login = () => {
   };
 
   return (
+    <div style={{backgroundColor:"#051221",overflow:'hidden'}}>
     <Container sx={{ height: "100vh", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Box sx={{ p: 7, width: 400, border: '1px solid black', borderRadius: '4px', boxShadow: '1px 2px 2px 1px' }}>
+      <Box sx={{ p: 7, width: 400, border: '1px solid black', borderRadius: '4px', boxShadow: '1px 2px 2px 1px',bgcolor:'white' }}>
         <form onSubmit={handleSubmit}>
           <Typography variant='h4' sx={{ mb: 5, textAlign: 'center' }}>Login</Typography>
 
@@ -34,7 +35,7 @@ const Login = () => {
             />
           </Box>
 
-          <Box sx={{ mb: 6 }}>
+          <Box sx={{ mb: 3 }}>
             <TextField
               fullWidth
               label="Enter Password"
@@ -44,8 +45,10 @@ const Login = () => {
               required
             />
           </Box>
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 6 }}>
+        <Box sx={{mt:2,mb:4}}>
+          <Typography sx={{cursor:'pointer'}} onClick={()=>{navigate('/forgotPassword')}}> Forgot password ?</Typography>
+        </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 6 }}>
             <Button type='submit' variant='contained'>Login</Button>
             <Typography variant='h6'>OR</Typography>
             <Button variant='outlined' onClick={() => navigate('/signup')}>Register</Button>
@@ -53,6 +56,7 @@ const Login = () => {
         </form>
       </Box>
     </Container>
+    </div>
   )
 }
 
