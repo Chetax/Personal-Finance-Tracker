@@ -12,7 +12,6 @@ import { Grid, Typography } from '@mui/material';
 import { useState } from 'react';
 import Summary from './Summary';
 import { useNavigate } from 'react-router-dom';
-
 const Dashbaord = () => {
     const [selectedPage, setSelectedPage] = useState('Dashboard');
     const today=new Date();
@@ -33,7 +32,6 @@ const Dashbaord = () => {
               </ListItem>
             ))}
           </List>
-
           <List sx={{display: 'flex',alignItems:"center",justifyContent:'end',mb:4}}>
             {[[ 'Logout',<LogoutIcon key="logout"/>]].map(([text,icon]) => (
               <ListItem key={text} sx={{my:1}}>
