@@ -17,6 +17,7 @@ const Dashbaord = () => {
     const today=new Date();
     const currHr=today.getHours();
     const navigate=useNavigate();
+    
   return (
     <Box sx={{display:'flex' ,height:'100vh'}}>
     <Box sx={{ display: 'flex',bgcolor:'#fbfcfe' ,width:'15%',height:'100vh'}}>
@@ -51,8 +52,10 @@ const Dashbaord = () => {
      : <Typography variant='h4'>Good evening</Typography>
     }
   </Grid>
-  <Grid size={8} sx={{display:'flex',justifyContent:'end'}}>
-    <span style={{borderRadius:"50%",backgroundColor:'green',height:'40px',width:'50px',cursor:'pointer'}} onClick={()=>navigate('/profile')}></span>
+  <Grid size={8} sx={{display:'flex',justifyContent:'end',alignItems:'center'}}>
+    <Typography sx={{mr:1,fontFamily:'cursive'}}>Chetax</Typography>
+    <img src="https://picsum.photos/200/300" alt="userprofile" style={{borderRadius:"50%",height:'50px',width:'60px',cursor:'pointer'}} onClick={()=>navigate('/profile')}/>
+
   </Grid>
    </Grid>
     {selectedPage==='Dashboard' ? <Summary/> :selectedPage}
