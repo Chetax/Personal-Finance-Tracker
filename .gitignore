@@ -1,0 +1,8 @@
+
+# macOS files
+.DS_Store
+
+# System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
