@@ -15,21 +15,13 @@ const SignUp = () => {
     console.log({profile,name, email, password });
   };
   return (
+        <div style={{backgroundColor:"#051221",overflow:'hidden'}}>
      <Container sx={{ height: "100vh", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Box sx={{ p: 7, width: 400, border: '1px solid black', borderRadius: '4px', boxShadow: '1px 2px 2px 1px' }}>
+          <Box sx={{ p: 7, width: 450, border: '1px solid black', borderRadius: '4px', boxShadow: '1px 2px 2px 1px',bgcolor:'white' }}>
             <form onSubmit={handleSubmit}>
               <Typography variant='h4' sx={{ mb: 5, textAlign: 'center' }}>Register</Typography>
 
-              <Box sx={{ mb: 3 }}>
-                  <TextField
-                  fullWidth
-                  label="Image url"
-                  type="text"
-                  value={profile}
-                  onChange={(e) => setProfile(e.target.value)}
-                  
-                />
-              </Box>
+  
 
               <Box sx={{ mb: 3 }}>
                   <TextField
@@ -53,7 +45,7 @@ const SignUp = () => {
                 />
               </Box>
     
-              <Box sx={{ mb: 6 }}>
+              <Box sx={{ mb: 3 }}>
                 <TextField
                   fullWidth
                   label="Enter Password"
@@ -63,15 +55,26 @@ const SignUp = () => {
                   required
                 />
               </Box>
-    
+      <Box sx={{ mb: 6 }}>
+                  <TextField
+                  fullWidth
+                  label="Image url"
+                  type="text"
+                  value={profile}
+                  onChange={(e) => setProfile(e.target.value)}
+                  
+                />
+              </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 6 }}>
                 <Button type='submit' variant='contained'>Register</Button>
                 <Typography variant='h6'>OR</Typography>
                 <Button variant='outlined' onClick={() => navigate('/login')}>Login</Button>
               </Box>
+              
             </form>
           </Box>
         </Container>
+        </div>
   )
 }
 
