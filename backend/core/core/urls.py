@@ -9,5 +9,7 @@ router.register(r'user', UserViewSet, basename='user')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/auth/',include('auth.urls'),name='auth')
+    path('api/auth/',include('auth.urls'),name='auth'),
+    path('api/finance/', include('Finance.urls')),
+
 ]
