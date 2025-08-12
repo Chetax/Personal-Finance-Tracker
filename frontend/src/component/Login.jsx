@@ -41,8 +41,9 @@ const Login = () => {
   };
 
   return (
+       <div style={{backgroundColor:"#051221",overflow:'hidden'}}>
     <Container sx={{ height: "100vh", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Box sx={{ p: 7, width: 400, border: '1px solid black', borderRadius: '4px', boxShadow: '1px 2px 2px 1px' }}>
+      <Box sx={{ p: 7, width: 400, border: '1px solid black', borderRadius: '4px', boxShadow: '1px 2px 2px 1px',bgcolor:'white'  }}>
         <form onSubmit={handleSubmit}>
           <Typography variant='h4' sx={{ mb: 5, textAlign: 'center' }}>Login</Typography>
 
@@ -57,7 +58,7 @@ const Login = () => {
             />
           </Box>
 
-          <Box sx={{ mb: 6 }}>
+          <Box sx={{ mb: 3 }}>
             <TextField
               fullWidth
               label="Enter Password"
@@ -68,6 +69,12 @@ const Login = () => {
             />
           </Box>
 
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5}}>
+                  <Typography variant='subtitle-1' sx={{cursor:'pointer'}} onClick={()=>{
+                    navigate('/forgotPassword')
+                  }}>Reset Password</Typography>
+                </Box>
+
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 6 }}>
             <Button type='submit' variant='contained'>Login</Button>
             <Typography variant='h6'>OR</Typography>
@@ -76,6 +83,7 @@ const Login = () => {
         </form>
       </Box>
     </Container>
+    </div>
   )
 }
 
