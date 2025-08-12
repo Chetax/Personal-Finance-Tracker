@@ -2,6 +2,7 @@ import { Box, Button, Container, Typography, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast';
+import axios from 'axios';
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -9,10 +10,25 @@ const SignUp = () => {
     const [profile,setProfile]=useState('');
 
     const navigate = useNavigate();
-    const handleSubmit = (e) => {
-       toast.success('Register successful!');
-    e.preventDefault();
-    console.log({profile,name, email, password });
+    const handleSubmit = async(e) => {
+
+        e.preventDefault();
+
+  if (!name || !email || !password || !profile) {
+    toast.error("Please fill in all fields");
+    return;
+  }
+     try{
+      const response=await axios.post('http://127.0.0.1:8000/api/auth/register/',{
+        name,email,password,image: profile
+      });
+      toast.success('Register successful!');
+    console.log('Registration response:', response.data);
+    navigate('/dashboard');
+     }catch (error) {
+    console.error('Registration error:', error);
+    toast.error(error.response?.data?.detail || 'Registration failed');
+  }
   };
   return (
         <div style={{backgroundColor:"#051221",overflow:'hidden'}}>
