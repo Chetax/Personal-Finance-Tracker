@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import TokenIcon from '@mui/icons-material/Token'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { jwtDecode } from 'jwt-decode'
 import { useCookies } from 'react-cookie'
 import toast from 'react-hot-toast'
 import { useUser } from '../context/UserContext';
@@ -13,7 +12,7 @@ const Profile = () => {
   const [edit, setEdit] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [image, setImage] = useState('https://picsum.photos/200/300')
+  const [image, setImage] = useState('')
   const [cookies] = useCookies(['cookie'])
   const navigate = useNavigate()
 const { userId } = useUser();
@@ -24,17 +23,15 @@ useEffect(() => {
       const token = cookies.cookie;
       if(!token) navigate('/login')
   const fetchUserProfile = async () => {
-    if (!userId) return; // Wait for userId to be ready
+    if (!userId) return;
     try {
-  
-
-      const response = await axios.get(`http://127.0.0.1:8000/api/user/${userId}/`, {
+      const response = await axios.get(`http://127.0.0.1:8000/api/user`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
 
-      const user = response.data;
+      const user = response.data[0];
       setName(user.name || '');
       setEmail(user.email || '');
       setImage(user.profile_picture || 'https://picsum.photos/200/300');
@@ -56,7 +53,7 @@ useEffect(() => {
   }
     const token=cookies.cookie;
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/user/${userId}/`, {
+    await axios.delete(`http://127.0.0.1:8000/api/user/`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -74,9 +71,6 @@ useEffect(() => {
   const handleUpdate = async () => {
     try {
       const token = cookies.cookie
-      const decoded = jwtDecode(token)
-      const userId = decoded.user_id
-
       const response = await axios.put(
         `http://127.0.0.1:8000/api/user/${userId}/`,
         {
