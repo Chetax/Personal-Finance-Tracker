@@ -5,18 +5,19 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from User.serializers import RegisterSerializer, UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
    
     return {
-
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
 
 class RegisterView(APIView):
-    permission_classes = []  # allow anyone
+    permission_classes = []  
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -32,3 +33,6 @@ class ProtectedView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         return Response({"message": f"Hello {request.user.email}, you are authenticated!"})
+
+class CustomLoginView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

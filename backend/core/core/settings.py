@@ -21,10 +21,9 @@ load_dotenv()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = 'django-insecure-71_45ftx8^1^jjtzt=_oe1*fl)-h5-3)xq$b&r^(c1js$7v@k0'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -54,8 +53,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),   # Token valid for 7 days
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30), # Refresh token valid for 30 days
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),   
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30), 
 }
 
 
