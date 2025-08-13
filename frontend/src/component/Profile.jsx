@@ -18,13 +18,15 @@ const Profile = () => {
   const navigate = useNavigate()
 const { userId } = useUser();
 
-  // Fetch user info on mount
+
 useEffect(() => {
+
+      const token = cookies.cookie;
+      if(!token) navigate('/login')
   const fetchUserProfile = async () => {
     if (!userId) return; // Wait for userId to be ready
-
     try {
-      const token = cookies.cookie;
+  
 
       const response = await axios.get(`http://127.0.0.1:8000/api/user/${userId}/`, {
         headers: {
@@ -44,19 +46,16 @@ useEffect(() => {
   };
 
   fetchUserProfile();
-}, [userId]); // Depend on userId so it refetches once it's set
+}, [userId]); 
+
 
 
   const handleDelete = async () => {
   if (!window.confirm('Are you sure you want to delete your profile? This action is irreversible.')) {
     return
   }
-
+    const token=cookies.cookie;
   try {
-    const token = cookies.cookie
-    const decoded = jwtDecode(token)
-    const userId = decoded.user_id
-
     await axios.delete(`http://127.0.0.1:8000/api/user/${userId}/`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -64,7 +63,7 @@ useEffect(() => {
     })
 
     toast.success('Profile deleted successfully!')
-    navigate('/register') // or navigate to login or home, depending on app flow
+    navigate('/login') // or navigate to login or home, depending on app flow
   } catch (error) {
     console.error('Error deleting profile:', error)
     toast.error('Failed to delete profile.')
@@ -173,7 +172,7 @@ useEffect(() => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 6 }}>
             <Typography variant="h6">Delete Your Profile</Typography>
-            <Button variant="contained" sx={{ bgcolor: 'red', mx: 6, cursor: 'pointer' }}>
+            <Button onClick={handleDelete} variant="contained" sx={{ bgcolor: 'red', mx: 6, cursor: 'pointer' }}>
               Delete
             </Button>
           </Box>
