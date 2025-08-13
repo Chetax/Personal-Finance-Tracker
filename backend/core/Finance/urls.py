@@ -3,7 +3,7 @@ from django.urls import path, include
 from .views import CategoryViewSet, ExpenseViewSet, IncomeViewSet, BudgetViewSet, AnalyticsView
 
 router = DefaultRouter()
-router.register(r'categories/', CategoryViewSet, basename='category')
+router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'expenses', ExpenseViewSet, basename='expense')
 router.register(r'incomes', IncomeViewSet, basename='income')
 router.register(r'budgets', BudgetViewSet, basename='budget')

@@ -34,5 +34,16 @@ class ProtectedView(APIView):
     def get(self, request):
         return Response({"message": f"Hello {request.user.email}, you are authenticated!"})
 
-class CustomLoginView(TokenObtainPairView):
+
+class LoginView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.user
+        tokens = serializer.validated_data
+        return Response({
+            "access": tokens["access"],
+            "refresh": tokens["refresh"]
+        })

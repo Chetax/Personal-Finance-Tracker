@@ -8,3 +8,4 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email
         token['name'] = user.name or ""
         return token
+
