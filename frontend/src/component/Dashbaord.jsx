@@ -4,20 +4,35 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import ListItemButton from '@mui/joy/ListItemButton';
 import GridViewIcon from '@mui/icons-material/GridView';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import DonutSmallIcon from '@mui/icons-material/DonutSmall';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+
 import TokenIcon from '@mui/icons-material/Token';
 import { Grid, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import { useCookies } from 'react-cookie'
+import Analytics from './Analytics';
 import Summary from './Summary';
 import { useNavigate } from 'react-router-dom';
 const Dashbaord = () => {
     const [selectedPage, setSelectedPage] = useState('Dashboard');
     const today=new Date();
+
     const currHr=today.getHours();
     const navigate=useNavigate();
-    
+    const [cookies, setCookie, removeCookie] = useCookies(["cookie"]);
+useEffect(() => {
+  const token = cookies.cookie
+  if (!token) {
+    navigate('/login', { replace: true })
+  }
+}, [cookies, navigate])
+
+const handleLogout=()=>{
+removeCookie("cookie");
+navigate('/login')
+}
   return (
     <Box sx={{display:'flex' ,height:'100vh'}}>
     <Box sx={{ display: 'flex',bgcolor:'#fbfcfe' ,width:'15%',height:'100vh'}}>
@@ -27,7 +42,7 @@ const Dashbaord = () => {
            <Typography sx={{fontSize:"20px"}}> FinanceMng</Typography>
           </Box>
           <List sx={{display: 'flex',alignItems:"center",justifyItems:'center'}}>
-            {[['Dashboard',<GridViewIcon key="icone"/>],['Payment',<AccountBalanceIcon key='AccountBalance'/>], ['Analytics',<BarChartIcon key='Analytics'/>], ['History',<ScheduleIcon key="ScheduleIcon"/>]].map(([text,icon]) => (
+            {[['Dashboard',<GridViewIcon key="icone"/>], ['Analytics',<BarChartIcon key='Analytics'/>], ['Budgets',<DonutSmallIcon key="Budgets"/>]].map(([text,icon]) => (
               <ListItem key={text} sx={{my:1,width:'70%'}}>
                 <ListItemButton onClick={() => setSelectedPage(text)} sx={{borderRadius:"10px",justifyContent:'center',bgcolor:text==selectedPage ? '#f0ecfc':''  }}>{icon} {text}</ListItemButton>
               </ListItem>
@@ -36,7 +51,7 @@ const Dashbaord = () => {
           <List sx={{display: 'flex',alignItems:"center",justifyContent:'end',mb:4}}>
             {[[ 'Logout',<LogoutIcon key="logout"/>]].map(([text,icon]) => (
               <ListItem key={text} sx={{my:1}}>
-                <ListItemButton sx={{borderRadius:"10px"}}>   {icon} {text}</ListItemButton>
+                <ListItemButton onClick={handleLogout} sx={{borderRadius:"10px"}}>   {icon} {text}</ListItemButton>
               </ListItem>
             ))}
           </List>
@@ -58,7 +73,11 @@ const Dashbaord = () => {
 
   </Grid>
    </Grid>
-    {selectedPage==='Dashboard' ? <Summary/> :selectedPage}
+    {selectedPage==='Dashboard' ? <Summary/> :
+     selectedPage==='Analytics' ? <Analytics/>: 
+     selectedPage
+    }
+     
   </Box>
     </Box>
 
