@@ -5,8 +5,8 @@ from rest_framework.views import APIView
 from django.db.models import Sum
 from datetime import date
 
-from .models import Category, Expense, Income, Budget
-from .serializers import CategorySerializer, ExpenseSerializer, IncomeSerializer, BudgetSerializer
+from .models import Category, Expense, Income, Budget, Notification
+from .serializers import CategorySerializer, ExpenseSerializer, IncomeSerializer, BudgetSerializer, NotificationSerializer
 
 class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -26,7 +26,20 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         return Expense.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        expense = serializer.save(user=self.request.user)
+        budgets = Budget.objects.filter(
+            user=self.request.user,
+            category=expense.category,
+            month__year=expense.date.year,
+            month__month=expense.date.month
+        )
+        print(budgets)
+        for budget in budgets:
+            if budget.is_overspent():
+                Notification.objects.create(
+                    user=self.request.user,
+                    message=f"You have exceeded your budget for {budget.category.name} this month."
+                )
 
 class IncomeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -69,3 +82,10 @@ class AnalyticsView(APIView):
             'total_incomes': float(total_incomes),
             'expenses_by_category': list(expenses_by_category),
         })
+
+class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = NotificationSerializer
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
