@@ -10,6 +10,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
+
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -74,6 +75,7 @@ const Summary = () => {
 
         setBudgets(budgetsRes.data);
         setCategories(categoriesRes.data);
+        console.log()
       } catch (err) {
         console.error('Error loading summary:', err);
       }

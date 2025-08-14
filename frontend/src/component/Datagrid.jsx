@@ -26,26 +26,67 @@ const [newCategoryName, setNewCategoryName] = useState('');
   const [editRow, setEditRow] = useState(null); // current row to edit
   const [editType, setEditType] = useState(''); // incomes or expenses
 
-  // Modal fields for edit
+
   const [editDescription, setEditDescription] = useState('');
   const [editAmount, setEditAmount] = useState(0);
   const [editCategory, setEditCategory] = useState('');
   const [token] = useCookies(['cookie']);
 
 
-  // Function to show new category input
 const handleShowNewCategoryInput = () => {
   setShowNewCategoryInput(true);
   setNewCategoryName('');
 };
 
-// Function to cancel adding new category
+
 const handleCancelNewCategory = () => {
   setShowNewCategoryInput(false);
   setNewCategoryName('');
 };
 
-// Function to save new category
+const exportToCsv = (rows, columns, filename = 'export.csv') => {
+  if (!rows.length) {
+    toast.error('No data to export');
+    return;
+  }
+
+  // Extract the columns you want to export (exclude buttons etc)
+  const exportColumns = columns.filter(col => !['edit', 'delete'].includes(col.field));
+
+  // CSV header row
+  const header = exportColumns.map(col => `"${col.headerName}"`).join(',');
+
+  // CSV rows
+  const csvRows = rows.map(row =>
+    exportColumns
+      .map(col => {
+        // Get value for each column, fallback to empty string
+        let val = row[col.field] ?? '';
+        // Escape quotes by doubling them
+        if (typeof val === 'string') {
+          val = val.replace(/"/g, '""');
+        }
+        return `"${val}"`;
+      })
+      .join(',')
+  );
+
+  // Combine header and rows
+  const csvString = [header, ...csvRows].join('\n');
+
+  // Create blob and trigger download
+  const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  toast.success('CSV exported!');
+};
+
+
 const handleSaveNewCategory = async () => {
   if (!newCategoryName.trim()) {
     toast.error("Category name can't be empty");
@@ -231,17 +272,41 @@ const handleSaveNewCategory = async () => {
 
   return (
     <Box sx={{ p: 4 }}>
+      <Box sx={{display:'flex' ,justifyContent:'space-between'}}>
       <h2>Income Data</h2>
+      <Button
+  variant="outlined"
+  sx={{ mb: 1 }}
+  onClick={() =>
+    exportToCsv(formatData(incomeData, 'incomes'), columns, 'income-data.csv')
+  }
+>
+  Export Income CSV
+</Button>
+</Box>
       <DataGrid
         rows={formatData(incomeData, 'incomes')}
         columns={columns}
-        autoHeight
         pageSize={5}
         rowsPerPageOptions={[5]}
         sx={{ mb: 4 }}
       />
 
-      <h2>Expense Data</h2>
+
+
+    
+      <Box sx={{display:'flex' ,justifyContent:'space-between'}}>
+        <h2>Expense Data</h2>
+  <Button
+  variant="outlined"
+  sx={{ mb: 1 }}
+  onClick={() =>
+    exportToCsv(formatData(expenseData, 'expenses'), columns, 'expense-data.csv')
+  }
+>
+  Export Expense CSV
+</Button>
+</Box>
       <DataGrid
         rows={formatData(expenseData, 'expenses')}
         columns={columns}

@@ -4,8 +4,8 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import ListItemButton from '@mui/joy/ListItemButton';
 import GridViewIcon from '@mui/icons-material/GridView';
-import DonutSmallIcon from '@mui/icons-material/DonutSmall';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import ClipLoader from "react-spinners/ClipLoader";
 import axios from 'axios'
 import { useUser } from '../context/UserContext';
 import TokenIcon from '@mui/icons-material/Token';
@@ -17,16 +17,19 @@ import Summary from './Summary';
 import { useNavigate } from 'react-router-dom';
 const Dashbaord = () => {
    const { userId } = useUser();
+
   const [selectedPage, setSelectedPage] = useState(() => {
   return localStorage.getItem('selectedPage') || 'Dashboard';
 });
     const [username,setUsername]=useState('');
+    const [loading, setLoading] = useState(true);
     const today=new Date();
     const currHr=today.getHours();
     const navigate=useNavigate();
     const [cookies, setCookie, removeCookie] = useCookies(["cookie"]);
     const handlePageChange = (page) => {
   setSelectedPage(page);
+  setLoading(true);
   localStorage.setItem('selectedPage', page);
 };
 
@@ -44,15 +47,18 @@ useEffect(() => {
       });
 
       const user = response.data[0];
-      console.log("user fetched ",user)
       setUsername(user.name.trim().split(" ").filter(Boolean)[0]);
-      console.log(username)
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }catch(err){
       console.log(err);
+      setLoading(false); 
     }
     }
     getInfo()
-}, [cookies, navigate])
+}, [cookies, navigate,selectedPage])
 
 const handleLogout=()=>{
 removeCookie("cookie");
@@ -67,7 +73,7 @@ navigate('/login')
            <Typography sx={{fontSize:"20px"}}> FinanceMng</Typography>
           </Box>
           <List sx={{display: 'flex',alignItems:"center",justifyItems:'center'}}>
-            {[['Dashboard',<GridViewIcon key="icone"/>], ['Analytics',<BarChartIcon key='Analytics'/>], ['Budgets',<DonutSmallIcon key="Budgets"/>]].map(([text,icon]) => (
+            {[['Dashboard',<GridViewIcon key="icone"/>], ['Analytics',<BarChartIcon key='Analytics'/>]].map(([text,icon]) => (
               <ListItem key={text} sx={{my:1,width:'70%'}}>
                 <ListItemButton onClick={() => handlePageChange(text)} sx={{borderRadius:"10px",justifyContent:'center',bgcolor:text==selectedPage ? '#f0ecfc':''  }}>{icon} {text}</ListItemButton>
               </ListItem>
@@ -82,7 +88,18 @@ navigate('/login')
           </List>
         </Box>
 </Box>
-<Box sx={{ width: '85%', p: 4,ml:"14%" }}>
+
+{
+  loading ?  <Box sx={{
+        width: '100%',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        <ClipLoader size={60} color="#5e35b1" loading={loading} />
+      </Box> : (<>
+  <Box sx={{ width: '85%', p: 4,ml:"14%" }}>
 
    <Grid container spacing={2} sx={{ flexGrow: 1 ,justifyContent:'center',alignItems:'center' }}>
      <Grid size={4}>
@@ -99,13 +116,15 @@ navigate('/login')
   </Grid>
    </Grid>
     {selectedPage==='Dashboard' ? <Summary/> :
-     selectedPage==='Analytics' ? <Analytics/>: 
-     selectedPage
+  <Analytics/>
+
     }
      
   </Box>
-    </Box>
+  </>)
+}
 
+    </Box>
   );
 }
 

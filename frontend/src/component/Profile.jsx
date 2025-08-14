@@ -1,5 +1,6 @@
 import { Box, Button, Container, Typography, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import ClipLoader from "react-spinners/ClipLoader";
 import TokenIcon from '@mui/icons-material/Token'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -7,13 +8,13 @@ import { useCookies } from 'react-cookie'
 import toast from 'react-hot-toast'
 import { useUser } from '../context/UserContext';
 
-
 const Profile = () => {
   const [edit, setEdit] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [image, setImage] = useState('')
   const [cookies] = useCookies(['cookie'])
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate()
 const { userId } = useUser();
 
@@ -35,17 +36,20 @@ useEffect(() => {
       setName(user.name || '');
       setEmail(user.email || '');
       setImage(user.profile_picture || 'https://picsum.photos/200/300');
-      console.log(user);
+       setTimeout(() => {
+        setLoading(false);
+              console.log(loading)
+      }, 500);
+      console.log(loading)
     } catch (error) {
       console.error('Error fetching user:', error);
       toast.error('Failed to load profile.');
+            setLoading(false); 
     }
   };
 
   fetchUserProfile();
-}, [userId]); 
-
-
+}, [userId,loading]); 
 
   const handleDelete = async () => {
   if (!window.confirm('Are you sure you want to delete your profile? This action is irreversible.')) {
@@ -96,14 +100,26 @@ useEffect(() => {
   return (
     <div>
       <Container>
-        {/* Header */}
+
         <Box sx={{ display: 'flex', mb: 4, mt: 3, gap: 2, cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
           <TokenIcon sx={{ fontSize: '30px' }} />
           <Typography sx={{ fontSize: '20px' }}>FinanceMng</Typography>
         </Box>
 
-        {/* Profile Top */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+
+{
+     loading ? (<>
+     <Box sx={{
+        width: '100%',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        <ClipLoader size={60} color="#5e35b1" loading={loading} />
+      </Box> 
+     </>) : (<>
+             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', my: 6 }}>
             <img src={image} alt="profile" style={{ borderRadius: '50%', height: '100px', width: '100px', marginRight: '15px' }} />
             <Box>
@@ -125,8 +141,7 @@ useEffect(() => {
             )}
           </Box>
         </Box>
-
-        {/* Editable Fields */}
+        
         <Box>
           <Box>
             <Typography variant="h6">Name</Typography>
@@ -171,6 +186,13 @@ useEffect(() => {
             </Button>
           </Box>
         </Box>
+     
+     </>)
+}
+
+
+
+
       </Container>
     </div>
   )
