@@ -1,32 +1,48 @@
+
 import Box from '@mui/joy/Box';
-import LogoutIcon from '@mui/icons-material/Logout';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import ListItemButton from '@mui/joy/ListItemButton';
+
+
+import { Grid, Typography, IconButton, Drawer } from '@mui/material';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+
+
+import TokenIcon from '@mui/icons-material/Token';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import ClipLoader from "react-spinners/ClipLoader";
-import axios from 'axios'
-import { useUser } from '../context/UserContext';
-import TokenIcon from '@mui/icons-material/Token';
-import { Grid, Typography } from '@mui/material';
-import { useState,useEffect } from 'react';
-import { useCookies } from 'react-cookie'
-import Analytics from './Analytics';
-import Summary from './Summary';
+import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
+
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import ClipLoader from 'react-spinners/ClipLoader';
+import axios from 'axios';
+
+
+import Summary from './Summary';
+import Analytics from './Analytics';
+import Notification from './Notification';
+import { useUser } from '../context/UserContext';
+
 const Dashbaord = () => {
    const { userId } = useUser();
-
   const [selectedPage, setSelectedPage] = useState(() => {
   return localStorage.getItem('selectedPage') || 'Dashboard';
 });
     const [username,setUsername]=useState('');
+    const [userimage,setUserimage]=useState('');
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const today=new Date();
     const currHr=today.getHours();
     const navigate=useNavigate();
-    const [cookies, setCookie, removeCookie] = useCookies(["cookie"]);
+    const [cookies, removeCookie] = useCookies(["cookie"]);
     const handlePageChange = (page) => {
   setSelectedPage(page);
   setLoading(true);
@@ -34,10 +50,8 @@ const Dashbaord = () => {
 };
 
 useEffect(() => {
-  const token = cookies.cookie
-  if (!token) {
-    navigate('/login', { replace: true })
-  }
+const token = cookies.cookie;
+  if (!token) return; // Don't even try if no token
  const getInfo =async()=>{
   try {
       const response = await axios.get(`http://127.0.0.1:8000/api/user/`, {
@@ -47,6 +61,7 @@ useEffect(() => {
       });
 
       const user = response.data[0];
+      setUserimage(user.image)
       setUsername(user.name.trim().split(" ").filter(Boolean)[0]);
 
       setTimeout(() => {
@@ -60,13 +75,25 @@ useEffect(() => {
     getInfo()
 }, [cookies, navigate,selectedPage])
 
-const handleLogout=()=>{
-removeCookie("cookie");
-navigate('/login')
-}
+
+const handleLogout = () => {
+  removeCookie("cookie");
+  localStorage.clear(); // optional
+  navigate('/login', { replace: true });
+};
+
   return (
+    <Box>
+      <Box sx={{ display:{ xs: 'flex',sm: 'flex',md: 'flex',lg: 'none'},mb:4,mt:3,gap:2}}>
+            <TokenIcon sx={{fontSize:'30px'}}/>
+           <Typography sx={{fontSize:"20px"}}> FinanceMng</Typography>
+          </Box>
+
+
+
     <Box sx={{display:'flex' }}>
-    <Box sx={{ display: 'flex',bgcolor:'#fbfcfe' ,width:'15%',height:'100vh',position:'fixed',zIndex:4}}>
+    
+    <Box sx={{  display:{ xs: 'none',sm: 'none',md: 'none',lg: 'flex'},bgcolor:'#fbfcfe' ,width:{ xs: '0',sm: '0',md: '0',lg: '15%'},height:'100vh',position:'fixed',zIndex:4}}>
         <Box role="presentation" sx={{display: 'flex',flexDirection:'column',justifyItems:"space-between",width:'100%'}}>
           <Box sx={{display:'flex',justifyContent:'center',alignItems:'center',mb:4,mt:3,gap:2}}>
             <TokenIcon sx={{fontSize:'30px'}}/>
@@ -89,6 +116,58 @@ navigate('/login')
         </Box>
 </Box>
 
+ <Drawer
+    anchor="right"
+    open={drawerOpen}
+    onClose={() => setDrawerOpen(false)}
+    sx={{ display: { lg: 'none' } }} 
+  >
+    <Box sx={{ width: 250, p: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6">Welcome, {username}</Typography>
+        <IconButton onClick={() => setDrawerOpen(false)}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <Box sx={{ my: 2 }}>
+        <img
+          src={userimage}
+          alt="profile"
+          style={{ borderRadius: '50%', height: '80px', width: '80px', cursor: 'pointer' }}
+          onClick={() => {
+            navigate('/profile');
+            setDrawerOpen(false);
+          }}
+        />
+    
+      </Box>
+      <List>
+        {[['Dashboard', <GridViewIcon key="icon" />], ['Analytics', <BarChartIcon key='Analytics' />]].map(([text, icon]) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton onClick={() => {
+              handlePageChange(text);
+              setDrawerOpen(false);
+            }}>
+              {icon}
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+        <Divider sx={{ my: 2 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => {
+            handleLogout();
+            setDrawerOpen(false);
+          }}>
+            <LogoutIcon />
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  </Drawer>
+
+
 {
   loading ?  <Box sx={{
         width: '100%',
@@ -99,7 +178,24 @@ navigate('/login')
       }}>
         <ClipLoader size={60} color="#5e35b1" loading={loading} />
       </Box> : (<>
-  <Box sx={{ width: '85%', p: 4,ml:"14%" }}>
+ <Box
+  sx={{
+    width: {
+      xs: '100%',
+      sm: '100%',
+      md: '100%',
+      lg: '85%' 
+    },
+    ml: {
+      xs: 0,
+      sm: 0,
+      md: 0,
+      lg: '15%' 
+    },
+    p: 4
+  }}
+>
+
 
    <Grid container spacing={2} sx={{ flexGrow: 1 ,justifyContent:'center',alignItems:'center' }}>
      <Grid size={4}>
@@ -110,20 +206,40 @@ navigate('/login')
     }
   </Grid>
   <Grid size={8} sx={{display:'flex',justifyContent:'end',alignItems:'center'}}>
-    <Typography sx={{mr:1,fontFamily:'cursive'}}>{username}</Typography>
-    <img src="https://picsum.photos/200/300" alt="userprofile" style={{borderRadius:"50%",height:'50px',width:'60px',cursor:'pointer'}} onClick={()=>navigate('/profile')}/>
+
+     <NotificationImportantIcon onClick={() => handlePageChange("Notification")} sx={{mx:2 ,cursor:'pointer'}} />
+            <IconButton
+  sx={{ display: { lg: 'none' }, ml: 1, cursor: 'pointer' }}
+  onClick={() => setDrawerOpen(true)}
+>
+
+  <MenuIcon />
+</IconButton>
+ <Box sx={{ display: { xs: 'none', lg: 'flex' }, alignItems: 'center', mr: 1 }}>
+ 
+  <Typography sx={{ mr: 1, fontFamily: 'cursive' }}>{username}</Typography>
+  <img
+    src="https://picsum.photos/200/300"
+    alt="userprofile"
+    style={{ borderRadius: "50%", height: '50px', width: '60px', cursor: 'pointer' }}
+    onClick={() => navigate('/profile')}
+  />
+
+</Box>
+
 
   </Grid>
    </Grid>
-    {selectedPage==='Dashboard' ? <Summary/> :
+    {
+    selectedPage==='Dashboard' ? <Summary/> :
+    selectedPage=='Notification'? <Notification/>:
   <Analytics/>
-
     }
-     
   </Box>
   </>)
 }
 
+    </Box>
     </Box>
   );
 }

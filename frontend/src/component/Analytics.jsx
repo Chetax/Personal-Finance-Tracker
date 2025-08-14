@@ -98,6 +98,11 @@ const Analytics = () => {
   };
 
   useEffect(() => {
+       const token = cookies.cookie
+  if (!token || token === "undefined") {
+    navigate('/login', { replace: true });
+    return;
+  }
     const getCategories = async () => {
       try {
         const response = await axios.get(

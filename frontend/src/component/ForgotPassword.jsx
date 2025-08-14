@@ -2,14 +2,31 @@ import { Box, Button, Container, Typography, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast';
+import axios from 'axios';
 const ForgotPassword = () => {
   const [password,setPassword]=useState('');
   const [conformPass,setConformPass]=useState('');
   const navigate=useNavigate();
+  
   const handleSubmit=(e)=>{
+
     e.preventDefault();
     if(password===conformPass)
     {
+     
+      try{
+        const user=axios.get("http://127.0.0.1:8000/api/user/",{
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        })
+        
+      }catch(err){
+        console.log(err)
+        toast.error("something wents wrong")
+      }
+
+
       toast.success('Sucess',"Password Reset Successfully")
       navigate('/login')
     }
@@ -17,6 +34,7 @@ const ForgotPassword = () => {
     {
        toast.error('Failure',"Conform password not matches with password")
     }
+
   }
   return (
    <div style={{backgroundColor:"#051221",overflow:'hidden'}}>
