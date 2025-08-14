@@ -2,7 +2,6 @@ import { Box, Button, Container, Typography, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie';
-import { jwtDecode } from 'jwt-decode'
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 import toast from 'react-hot-toast';
@@ -25,15 +24,10 @@ const Login = () => {
       password
     });
     const token = response.data;
-
+    localStorage.setItem('userid',token.user_id);
     toast.success('Login successful!');
     setCookie('cookie', token.access, { path: '/' });
-    const decoded = jwtDecode(token.access)
-   console.log("Decoded token:", decoded);
-    setUserId(decoded.user_id);
-    console.log("Set userId:", decoded.user_id);
-      console.log("Set userId:", userId);
-    
+    setUserId(token.user_id);    
     navigate('/dashboard');
   } catch (error) {
     if (error.response && error.response.data) {

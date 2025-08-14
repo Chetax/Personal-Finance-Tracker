@@ -18,7 +18,7 @@ class TransactionBase(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField(blank=True, null=True)
     date = models.DateField(default=timezone.now().date())
-
+    
     class Meta:
         abstract = True
 
