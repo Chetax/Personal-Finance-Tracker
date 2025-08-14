@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Expense, Income, Budget
+from .models import Category, Expense, Income, Budget, Notification
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,3 +24,8 @@ class BudgetSerializer(serializers.ModelSerializer):
         model = Budget
         fields = ['id', 'user', 'category', 'amount', 'month']
         read_only_fields = ['user']
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'message', 'created_at', 'read']

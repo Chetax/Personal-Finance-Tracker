@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import Sum
 
 from django.utils.timezone import now
 
@@ -33,5 +34,29 @@ class Budget(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     month = models.DateField()  
 
+    def spent_amount(self):
+        
+        return self.user.expenses.filter(
+            category=self.category,
+            date__month=self.month.month,
+            date__year=self.month.year
+            
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+    def is_overspent(self):
+        
+        return self.spent_amount() > self.amount
+    
     def __str__(self):
         return f"{self.user} - {self.category} - {self.month.strftime('%Y-%m')}"
+    
+    
+
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.email}: {self.message}"
